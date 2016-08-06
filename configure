@@ -1,0 +1,13 @@
+#!/bin/bash
+SDL2_CFLAGS="$(sdl2-config --cflags)"
+if [ -z "$SDL2_CFLAGS" ]; then
+	echo 'sdl2 NOT Found!' >&2
+	exit 1
+fi
+SDL2_LIBS="$(sdl2-config --libs)"
+if [ -z "$SDL2_LIBS" ]; then
+	echo 'sdl2 NOT Found!' >&2
+	exit 1
+fi
+echo "[GEN] config.mak" >&2
+echo -e "CFLAGS += ${SDL2_CFLAGS}\nLDFLAGS += ${SDL2_LIBS}" > config.mak

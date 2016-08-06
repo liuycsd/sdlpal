@@ -1,0 +1,6 @@
+/sdlpal
+*.o
+/tags
+/config.mak
+*.swp
+*~
