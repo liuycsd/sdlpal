@@ -72,6 +72,27 @@ SOUND_PlayCDA(
    INT    iNumTrack
 );
 
+#ifdef PAL_HAS_VOICE
+VOID
+PAL_StopVOICE(
+   VOID
+);
+
+VOID
+PAL_PlayVOICE(
+   WORD       wNum
+);
+
+WORD
+PAL_GetVoiceID(
+   WORD       wNum
+);
+#else
+#define PAL_StopVOICE(X) ((void)(0))
+#define PAL_PlayVOICE(X) ((void)(0))
+#define PAL_GetVoiceID(X) ((WORD)(0))
+#endif
+
 #ifdef PAL_CLASSIC
 extern int g_iCurrChannel;
 #define SOUND_Play(i) SOUND_PlayChannel((i), (g_iCurrChannel ^= 1))
@@ -81,6 +102,7 @@ extern int g_iCurrChannel;
 
 extern BOOL       g_fNoSound;
 extern BOOL       g_fNoMusic;
+extern BOOL       g_fNoVoice;
 #ifdef PAL_HAS_NATIVEMIDI
 extern BOOL       g_fUseMidi;
 #endif

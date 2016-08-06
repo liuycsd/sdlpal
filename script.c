@@ -3045,7 +3045,7 @@ PAL_RunTriggerScript(
    {
       pScript = &(gpGlobals->g.lprgScriptEntry[wScriptEntry]);
 
-      UTIL_WriteLog(LOG_DEBUG, "[SCRIPT] %.4x: %.4x %.4x %.4x %.4x\n", wScriptEntry,
+      UTIL_WriteLog(LOG_DEBUG, "[SCRIPT] %.4x: %.4x %.4x %.4x %.4x %.4x\n", wScriptEntry,
          pScript->wOperation, pScript->rgwOperand[0], pScript->rgwOperand[1],
          pScript->rgwOperand[2], pScript->rgwOperand[3]);
 
@@ -3294,6 +3294,7 @@ PAL_RunTriggerScript(
          //
          // Print dialog text
          //
+         PAL_PlayVOICE(PAL_GetVoiceID(pScript->rgwOperand[0]));
          PAL_ShowDialogText(PAL_GetMsg(pScript->rgwOperand[0]));
          wScriptEntry++;
          break;
@@ -3306,6 +3307,7 @@ PAL_RunTriggerScript(
    }
 
    PAL_EndDialog();
+   PAL_StopVOICE();
    g_iCurEquipPart = -1;
 
    return wNextScriptEntry;

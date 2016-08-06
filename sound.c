@@ -29,7 +29,7 @@
 #include "midi.h"
 #endif
 
-#ifdef PAL_HAS_MP3
+#if defined(PAL_HAS_MP3) || defined(PAL_HAS_VOICE)
 #include "libmad/music_mad.h"
 #endif
 
@@ -37,6 +37,7 @@ static BOOL  gSndOpened = FALSE;
 
 BOOL         g_fNoSound = FALSE;
 BOOL         g_fNoMusic = FALSE;
+BOOL         g_fNoVoice = FALSE;
 
 #ifdef PAL_HAS_NATIVEMIDI
 BOOL         g_fUseMidi = FALSE;
@@ -67,6 +68,10 @@ typedef struct tagSNDPLAYER
    BOOL                      fMP3Loop;
    INT                       iCurrentMP3;
    SDL_mutex                *lock;
+#endif
+#ifdef PAL_HAS_VOICE
+   mad_data                 *pMP3Voice;
+   SDL_mutex                *lockVoice;
 #endif
 } SNDPLAYER;
 
@@ -240,6 +245,31 @@ SOUND_FillAudio(
       SDL_mutexV(gSndPlayer.lock);
 #endif
       RIX_FillBuffer(stream, len);
+#ifdef PAL_HAS_VOICE
+      SDL_mutexP(gSndPlayer.lockVoice);
+
+      if (gSndPlayer.pMP3Voice != NULL)
+      {
+         LPBYTE pBuf = (LPBYTE)malloc(sizeof(LPBYTE) * len);
+         mad_getSamples(gSndPlayer.pMP3Voice, pBuf, len);
+#ifdef __SYMBIAN32__
+         SDL_MixAudio(stream, pBuf, len, g_iVolume);
+#else
+         SDL_MixAudio(stream, pBuf, len, SDL_MIX_MAXVOLUME * 2 / 3);
+#endif
+         free(pBuf);
+
+         if (!mad_isPlaying(gSndPlayer.pMP3Voice))
+         {
+             printf("[PAL_PlayVOICE] NOT playing\n");
+             mad_stop(gSndPlayer.pMP3Voice);
+             mad_closeFile(gSndPlayer.pMP3Voice);
+             gSndPlayer.pMP3Voice = NULL;
+         }
+      }
+
+      SDL_mutexV(gSndPlayer.lockVoice);
+#endif
    }
 
    //
@@ -405,6 +435,9 @@ SOUND_OpenAudio(
    gSndPlayer.iCurrentMP3 = -1;
    gSndPlayer.lock = SDL_CreateMutex();
 #endif
+#ifdef PAL_HAS_VOICE
+   gSndPlayer.lockVoice = SDL_CreateMutex();
+#endif
 
    //
    // Let the callback function run so that musics will be played.
@@ -479,6 +512,19 @@ SOUND_CloseAudio(
    }
 
    SDL_DestroyMutex(gSndPlayer.lock);
+#endif
+
+#ifdef PAL_HAS_VOICE
+   SDL_mutexP(gSndPlayer.lockVoice);
+
+   if (gSndPlayer.pMP3Voice != NULL)
+   {
+      mad_stop(gSndPlayer.pMP3Voice);
+      mad_closeFile(gSndPlayer.pMP3Voice);
+      gSndPlayer.pMP3Voice = NULL;
+   }
+
+   SDL_DestroyMutex(gSndPlayer.lockVoice);
 #endif
 
    RIX_Shutdown();
@@ -766,3 +812,58 @@ SOUND_PlayCDA(
 
    return FALSE;
 }
+
+
+#ifdef PAL_HAS_VOICE
+VOID
+PAL_StopVOICE(
+   VOID
+)
+{
+   SDL_mutexP(gSndPlayer.lockVoice);
+
+   if (gSndPlayer.pMP3Voice != NULL)
+   {
+      mad_stop(gSndPlayer.pMP3Voice);
+      mad_closeFile(gSndPlayer.pMP3Voice);
+
+      gSndPlayer.pMP3Voice = NULL;
+   }
+
+   SDL_mutexV(gSndPlayer.lockVoice);
+}
+
+VOID
+PAL_PlayVOICE(
+   WORD       wNum
+)
+{
+   printf("[PAL_PlayVOICE] %hu\n", wNum);
+   PAL_StopVOICE();
+
+   if (wNum > 0 && !g_fNoVoice)
+   {
+      SDL_mutexP(gSndPlayer.lockVoice);
+
+      gSndPlayer.pMP3Voice = mad_openFile(va("%s/voice/audio_%5hu.mp3", PAL_PREFIX, wNum), &gSndPlayer.spec);
+      if (gSndPlayer.pMP3Voice != NULL)
+      {
+         mad_start(gSndPlayer.pMP3Voice);
+         SDL_mutexV(gSndPlayer.lockVoice);
+
+         return;
+      }
+
+      SDL_mutexV(gSndPlayer.lockVoice);
+   }
+}
+
+// TODO
+WORD
+PAL_GetVoiceID(
+   WORD       wNum
+)
+{
+   return (WORD)12013;
+}
+#endif
