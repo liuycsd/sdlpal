@@ -137,6 +137,7 @@ FILE *MY_fopen(const char *path, const char *mode);
 #endif
 #if !defined (CYGWIN) && !defined (DINGOO) && !defined (GPH) && !defined (GEKKO) && !defined (__WINPHONE__)
 #define PAL_HAS_MP3           1
+#define PAL_HAS_VOICE         1
 #endif
 #endif
 #ifndef PAL_PREFIX
