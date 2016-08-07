@@ -517,6 +517,18 @@ PAL_SystemMenu(
    // Create menu items
    //
 #ifdef PAL_CLASSIC
+#ifdef PAL_HAS_VOICE
+   MENUITEM        rgSystemMenuItem[6] =
+   {
+      // value  label                      enabled   pos
+      { 1,      SYSMENU_LABEL_SAVE,        TRUE,     PAL_XY(53, 72) },
+      { 2,      SYSMENU_LABEL_LOAD,        TRUE,     PAL_XY(53, 72 + 18) },
+      { 3,      SYSMENU_LABEL_MUSIC,       TRUE,     PAL_XY(53, 72 + 36) },
+      { 4,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 72 + 54) },
+      { 5,      SYSMENU_LABEL_VOICE,       TRUE,     PAL_XY(53, 72 + 72) },
+      { 6,      SYSMENU_LABEL_QUIT,        TRUE,     PAL_XY(53, 72 + 90) },
+   };
+#else
    MENUITEM        rgSystemMenuItem[5] =
    {
       // value  label                      enabled   pos
@@ -525,6 +537,20 @@ PAL_SystemMenu(
       { 3,      SYSMENU_LABEL_MUSIC,       TRUE,     PAL_XY(53, 72 + 36) },
       { 4,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 72 + 54) },
       { 5,      SYSMENU_LABEL_QUIT,        TRUE,     PAL_XY(53, 72 + 72) },
+   };
+#endif // PAL_HAS_VOICE
+#else
+#ifdef PAL_HAS_VOICE
+   MENUITEM        rgSystemMenuItem[7] =
+   {
+      // value  label                      enabled   pos
+      { 1,      SYSMENU_LABEL_SAVE,        TRUE,     PAL_XY(53, 72) },
+      { 2,      SYSMENU_LABEL_LOAD,        TRUE,     PAL_XY(53, 72 + 18) },
+      { 3,      SYSMENU_LABEL_MUSIC,       TRUE,     PAL_XY(53, 72 + 36) },
+      { 4,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 72 + 54) },
+      { 5,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 72 + 72) },
+      { 6,      SYSMENU_LABEL_BATTLEMODE,  TRUE,     PAL_XY(53, 72 + 90) },
+      { 7,      SYSMENU_LABEL_QUIT,        TRUE,     PAL_XY(53, 72 + 108) },
    };
 #else
    MENUITEM        rgSystemMenuItem[6] =
@@ -537,15 +563,23 @@ PAL_SystemMenu(
       { 5,      SYSMENU_LABEL_BATTLEMODE,  TRUE,     PAL_XY(53, 72 + 72) },
       { 6,      SYSMENU_LABEL_QUIT,        TRUE,     PAL_XY(53, 72 + 90) },
    };
+#endif // PAL_HAS_VOICE
 #endif
-
    //
    // Create the menu box.
    //
 #ifdef PAL_CLASSIC
+#ifdef PAL_HAS_VOICE
+   lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 5, 3, 0, TRUE);
+#else
    lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 4, 3, 0, TRUE);
+#endif // PAL_HAS_VOICE
+#else
+#ifdef PAL_HAS_VOICE
+   lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 6, 3, 0, TRUE);
 #else
    lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 5, 3, 0, TRUE);
+#endif // PAL_HAS_VOICE
 #endif
    VIDEO_UpdateScreen(&rect);
 
@@ -553,11 +587,21 @@ PAL_SystemMenu(
    // Perform the menu.
    //
 #ifdef PAL_CLASSIC
+#ifdef PAL_HAS_VOICE
+   wReturnValue = PAL_ReadMenu(PAL_SystemMenu_OnItemChange, rgSystemMenuItem, 6,
+      gpGlobals->iCurSystemMenuItem, MENUITEM_COLOR);
+#else
    wReturnValue = PAL_ReadMenu(PAL_SystemMenu_OnItemChange, rgSystemMenuItem, 5,
+      gpGlobals->iCurSystemMenuItem, MENUITEM_COLOR);
+#endif // PAL_HAS_VOICE
+#else
+#ifdef PAL_HAS_VOICE
+   wReturnValue = PAL_ReadMenu(PAL_SystemMenu_OnItemChange, rgSystemMenuItem, 7,
       gpGlobals->iCurSystemMenuItem, MENUITEM_COLOR);
 #else
    wReturnValue = PAL_ReadMenu(PAL_SystemMenu_OnItemChange, rgSystemMenuItem, 6,
       gpGlobals->iCurSystemMenuItem, MENUITEM_COLOR);
+#endif // PAL_HAS_VOICE
 #endif
 
    if (wReturnValue == MENUITEM_VALUE_CANCELLED)
@@ -642,17 +686,38 @@ PAL_SystemMenu(
       g_fNoSound = !PAL_SwitchMenu(!g_fNoSound);
       break;
 
-#ifndef PAL_CLASSIC
    case 5:
+#ifndef PAL_CLASSIC
+#ifdef PAL_HAS_VOICE
+      //
+      // Voice
+      //
+      g_fNoVoice = !PAL_SwitchMenu(!g_fNoVoice);
+      break;
+
+   case 6:
+#endif // PAL_HAS_VOICE
       //
       // Battle Mode
       //
       PAL_BattleSpeedMenu();
       break;
 
-   case 6:
+#ifdef PAL_HAS_VOICE
+   case 7:
 #else
-   case 5:
+   case 6:
+#endif // PAL_HAS_VOICE
+#else
+#ifdef PAL_HAS_VOICE
+      //
+      // Voice
+      //
+      g_fNoVoice = !PAL_SwitchMenu(!g_fNoVoice);
+      break;
+
+   case 6:
+#endif // PAL_HAS_VOICE
 #endif
       //
       // Quit
