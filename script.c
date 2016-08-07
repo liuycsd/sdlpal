@@ -3045,9 +3045,9 @@ PAL_RunTriggerScript(
    {
       pScript = &(gpGlobals->g.lprgScriptEntry[wScriptEntry]);
 
-      UTIL_WriteLog(LOG_DEBUG, "[SCRIPT] %.4x: %.4x %.4x %.4x %.4x %.4x\n", wScriptEntry,
+      UTIL_WriteLog(LOG_DEBUG, "[SCRIPT] %.4x: %.4x %.4x %.4x %.4x\n", wScriptEntry,
          pScript->wOperation, pScript->rgwOperand[0], pScript->rgwOperand[1],
-         pScript->rgwOperand[2], pScript->rgwOperand[3]);
+         pScript->rgwOperand[2]);
 
       switch (pScript->wOperation)
       {
@@ -3119,6 +3119,7 @@ PAL_RunTriggerScript(
          // Redraw screen
          //
          PAL_ClearDialog(TRUE);
+         PAL_StopVOICE();
 
          if (PAL_DialogIsPlayingRNG())
          {
@@ -3246,6 +3247,7 @@ PAL_RunTriggerScript(
          // Show dialog in the middle part of the screen
          //
          PAL_ClearDialog(TRUE);
+         PAL_StopVOICE();
          PAL_StartDialog(kDialogCenter, (BYTE)pScript->rgwOperand[0], 0,
             pScript->rgwOperand[2] ? TRUE : FALSE);
          wScriptEntry++;
@@ -3256,6 +3258,7 @@ PAL_RunTriggerScript(
          // Show dialog in the upper part of the screen
          //
          PAL_ClearDialog(TRUE);
+         PAL_StopVOICE();
          PAL_StartDialog(kDialogUpper, (BYTE)pScript->rgwOperand[1],
             pScript->rgwOperand[0], pScript->rgwOperand[2] ? TRUE : FALSE);
          wScriptEntry++;
@@ -3266,6 +3269,7 @@ PAL_RunTriggerScript(
          // Show dialog in the lower part of the screen
          //
          PAL_ClearDialog(TRUE);
+         PAL_StopVOICE();
          PAL_StartDialog(kDialogLower, (BYTE)pScript->rgwOperand[1],
             pScript->rgwOperand[0], pScript->rgwOperand[2] ? TRUE : FALSE);
          wScriptEntry++;
@@ -3276,6 +3280,7 @@ PAL_RunTriggerScript(
          // Show text in a window at the center of the screen
          //
          PAL_ClearDialog(TRUE);
+         PAL_StopVOICE();
          PAL_StartDialog(kDialogCenterWindow, (BYTE)pScript->rgwOperand[0], 0, FALSE);
          wScriptEntry++;
          break;

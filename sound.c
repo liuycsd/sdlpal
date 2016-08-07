@@ -37,7 +37,9 @@ static BOOL  gSndOpened = FALSE;
 
 BOOL         g_fNoSound = FALSE;
 BOOL         g_fNoMusic = FALSE;
+#ifdef PAL_HAS_VOICE
 BOOL         g_fNoVoice = FALSE;
+#endif
 
 #ifdef PAL_HAS_NATIVEMIDI
 BOOL         g_fUseMidi = FALSE;
@@ -245,7 +247,14 @@ SOUND_FillAudio(
       SDL_mutexV(gSndPlayer.lock);
 #endif
       RIX_FillBuffer(stream, len);
+   }
+
+   //
+   // Play Voice
+   //
 #ifdef PAL_HAS_VOICE
+   if (!g_fNoVoice)
+   {
       SDL_mutexP(gSndPlayer.lockVoice);
 
       if (gSndPlayer.pMP3Voice != NULL)
@@ -261,16 +270,15 @@ SOUND_FillAudio(
 
          if (!mad_isPlaying(gSndPlayer.pMP3Voice))
          {
-             printf("[PAL_PlayVOICE] NOT playing\n");
-             mad_stop(gSndPlayer.pMP3Voice);
-             mad_closeFile(gSndPlayer.pMP3Voice);
-             gSndPlayer.pMP3Voice = NULL;
+            mad_stop(gSndPlayer.pMP3Voice);
+            mad_closeFile(gSndPlayer.pMP3Voice);
+            gSndPlayer.pMP3Voice = NULL;
          }
       }
 
       SDL_mutexV(gSndPlayer.lockVoice);
-#endif
    }
+#endif
 
    //
    // No current playing sound
@@ -838,10 +846,23 @@ PAL_PlayVOICE(
    WORD       wNum
 )
 {
-   printf("[PAL_PlayVOICE] %hu\n", wNum);
+   //
+   // Continue
+   //
+   if (wNum == 0)
+   {
+      return;
+   }
+
+   //
+   // Stop Voice
+   //
    PAL_StopVOICE();
 
-   if (wNum > 0 && !g_fNoVoice)
+   //
+   // Play Voice
+   //
+   if (!g_fNoVoice)
    {
       SDL_mutexP(gSndPlayer.lockVoice);
 
@@ -864,6 +885,8 @@ PAL_GetVoiceID(
    WORD       wNum
 )
 {
-   return (WORD)12013;
+   static WORD i = 0;
+   i ++;
+   return i > 1 ? 0 : 12013;
 }
 #endif

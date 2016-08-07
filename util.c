@@ -557,7 +557,7 @@ UTIL_WriteLog(
    }
 
    curTime = localtime(&lTime);
-   strftime(szDateBuf, 128, "%Y-%m-%d   %H:%M:%S", curTime);
+   strftime(szDateBuf, 128, "%Y-%m-%d   %H:%M:%S ", curTime);
    szDateBuf[strlen(szDateBuf) - 1] = '\0'; //remove the
 
    va_start(vaa,Fmt);
