@@ -548,7 +548,7 @@ PAL_SystemMenu(
       { 2,      SYSMENU_LABEL_LOAD,        TRUE,     PAL_XY(53, 63 + 18) },
       { 3,      SYSMENU_LABEL_MUSIC,       TRUE,     PAL_XY(53, 63 + 36) },
       { 4,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 63 + 54) },
-      { 5,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 63 + 72) },
+      { 5,      SYSMENU_LABEL_VOICE,       TRUE,     PAL_XY(53, 63 + 72) },
       { 6,      SYSMENU_LABEL_BATTLEMODE,  TRUE,     PAL_XY(53, 63 + 90) },
       { 7,      SYSMENU_LABEL_QUIT,        TRUE,     PAL_XY(53, 63 + 108) },
    };
