@@ -544,13 +544,13 @@ PAL_SystemMenu(
    MENUITEM        rgSystemMenuItem[7] =
    {
       // value  label                      enabled   pos
-      { 1,      SYSMENU_LABEL_SAVE,        TRUE,     PAL_XY(53, 72) },
-      { 2,      SYSMENU_LABEL_LOAD,        TRUE,     PAL_XY(53, 72 + 18) },
-      { 3,      SYSMENU_LABEL_MUSIC,       TRUE,     PAL_XY(53, 72 + 36) },
-      { 4,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 72 + 54) },
-      { 5,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 72 + 72) },
-      { 6,      SYSMENU_LABEL_BATTLEMODE,  TRUE,     PAL_XY(53, 72 + 90) },
-      { 7,      SYSMENU_LABEL_QUIT,        TRUE,     PAL_XY(53, 72 + 108) },
+      { 1,      SYSMENU_LABEL_SAVE,        TRUE,     PAL_XY(53, 63) },
+      { 2,      SYSMENU_LABEL_LOAD,        TRUE,     PAL_XY(53, 63 + 18) },
+      { 3,      SYSMENU_LABEL_MUSIC,       TRUE,     PAL_XY(53, 63 + 36) },
+      { 4,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 63 + 54) },
+      { 5,      SYSMENU_LABEL_SOUND,       TRUE,     PAL_XY(53, 63 + 72) },
+      { 6,      SYSMENU_LABEL_BATTLEMODE,  TRUE,     PAL_XY(53, 63 + 90) },
+      { 7,      SYSMENU_LABEL_QUIT,        TRUE,     PAL_XY(53, 63 + 108) },
    };
 #else
    MENUITEM        rgSystemMenuItem[6] =
@@ -575,11 +575,7 @@ PAL_SystemMenu(
    lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 4, 3, 0, TRUE);
 #endif // PAL_HAS_VOICE
 #else
-#ifdef PAL_HAS_VOICE
-   lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 6, 3, 0, TRUE);
-#else
    lpMenuBox = PAL_CreateBox(PAL_XY(40, 60), 5, 3, 0, TRUE);
-#endif // PAL_HAS_VOICE
 #endif
    VIDEO_UpdateScreen(&rect);
 

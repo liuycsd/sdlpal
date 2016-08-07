@@ -77,6 +77,9 @@ PAL_InitGlobals(
 #ifndef PAL_WIN95
    gpGlobals->lpObjectDesc = PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
 #endif
+#ifdef PAL_HAS_VOICE
+   gpGlobals->lpVoiceList = PAL_LoadVoiceList(va("%s%s", PAL_PREFIX, "voicelst.txt"));
+#endif
    gpGlobals->bCurrentSaveSlot = 1;
 
    return 0;
@@ -132,6 +135,9 @@ PAL_FreeGlobals(
       //
 #ifndef PAL_WIN95
       PAL_FreeObjectDesc(gpGlobals->lpObjectDesc);
+#endif
+#ifdef PAL_HAS_VOICE
+	  PAL_FreeVoiceList(gpGlobals->lpVoiceList);
 #endif
       //
       // Delete the instance
