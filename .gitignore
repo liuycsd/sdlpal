@@ -2,5 +2,6 @@
 *.o
 /tags
 /config.mak
+/sdlpal.exe
 *.swp
 *~

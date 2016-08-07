@@ -177,9 +177,9 @@ FILE *MY_fopen(const char *path, const char *mode);
 typedef const BYTE *LPCBYTE;
 #endif
 
-#ifndef __WINPHONE__
-#define PAL_HAS_NATIVEMIDI  1
-#endif
+//#ifndef __WINPHONE__
+//#define PAL_HAS_NATIVEMIDI  1
+//#endif
 
 #else
 
