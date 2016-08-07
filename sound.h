@@ -37,6 +37,14 @@ extern "C"
 {
 #endif
 
+#ifdef PAL_HAS_VOICE
+typedef struct tagVOICEDESC
+{
+   WORD                        wID;
+   WORD                        wName;
+} VOICEDESC, *LPVOICEDESC;
+#endif
+
 INT
 SOUND_OpenAudio(
    VOID
@@ -83,13 +91,23 @@ PAL_PlayVOICE(
    WORD       wNum
 );
 
+LPVOICEDESC
+PAL_LoadVoiceList(
+   LPCSTR         lpszFileName
+);
+VOID
+PAL_FreeVoiceList(
+   LPVOICEDESC   lpVoiceList
+);
 WORD
-PAL_GetVoiceID(
+PAL_GetVoiceName(
    WORD       wNum
 );
 #else
 #define PAL_StopVOICE(X) ((void)(0))
 #define PAL_PlayVOICE(X) ((void)(0))
+#define PAL_LoadVoiceList(X) (NULL)
+#define PAL_FreeVoiceList(X) ((void)(0))
 #define PAL_GetVoiceID(X) ((WORD)(0))
 #endif
 

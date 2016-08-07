@@ -24,6 +24,7 @@
 #include "sound.h"
 #include "rixplay.h"
 #include "util.h"
+#include "global.h"
 
 #ifdef PAL_HAS_NATIVEMIDI
 #include "midi.h"
@@ -259,14 +260,17 @@ SOUND_FillAudio(
 
       if (gSndPlayer.pMP3Voice != NULL)
       {
-         LPBYTE pBuf = (LPBYTE)malloc(sizeof(LPBYTE) * len);
-         mad_getSamples(gSndPlayer.pMP3Voice, pBuf, len);
+         LPBYTE pBuf = (LPBYTE)calloc(len, sizeof(LPBYTE));
+         if (pBuf != NULL)
+         {
+            mad_getSamples(gSndPlayer.pMP3Voice, pBuf, len);
 #ifdef __SYMBIAN32__
-         SDL_MixAudio(stream, pBuf, len, g_iVolume);
+            SDL_MixAudio(stream, pBuf, len, g_iVolume);
 #else
-         SDL_MixAudio(stream, pBuf, len, SDL_MIX_MAXVOLUME * 2 / 3);
+            SDL_MixAudio(stream, pBuf, len, SDL_MIX_MAXVOLUME * 1 / 2);
 #endif
-         free(pBuf);
+            free(pBuf);
+         }
 
          if (!mad_isPlaying(gSndPlayer.pMP3Voice))
          {
@@ -879,14 +883,138 @@ PAL_PlayVOICE(
    }
 }
 
-// TODO
+LPVOICEDESC
+PAL_LoadVoiceList(
+   LPCSTR         lpszFileName
+)
+/*++
+  Purpose:
+
+    Load the voice list from file.
+
+  Parameters:
+
+    [IN]  lpszFileName - the filename to be loaded.
+
+  Return value:
+
+    Pointer to loaded data, in WORD[][2] form. NULL if unable to load.
+
+--*/
+{
+   FILE                      *fp;
+   char                       buf[32];
+   char                      *p;
+   LPVOICEDESC                lpVoiceList = NULL, pNew = NULL;
+   WORD                       pos, len;
+
+   fp = fopen(lpszFileName, "r");
+
+   if (fp == NULL)
+   {
+      return NULL;
+   }
+
+   //
+   // Load data
+   //
+   len = 1;
+   while (fgets(buf, 32, fp) != NULL && len < 0xffff)
+   {
+      p = strchr(buf, '=');
+      if (p == NULL)
+      {
+         continue;
+      }
+      else
+      {
+         len ++;
+      }
+   }
+
+   lpVoiceList = (LPVOICEDESC)malloc(sizeof(VOICEDESC) * len);
+   pNew = lpVoiceList;
+   fseek(fp, 0, 0);
+
+   pos = 0;
+   while (fgets(buf, 32, fp) != NULL && pos < len)
+   {
+      p = strchr(buf, '=');
+      if (p == NULL)
+      {
+         continue;
+      }
+
+      if (sscanf(buf, "%hu=%hu", &pNew->wID, &pNew->wName))
+      {
+         pNew ++;
+         pos ++;
+      }
+   }
+
+   if (pos == 0)
+   {
+      free(lpVoiceList);
+      lpVoiceList = NULL;
+   }
+   else
+   {
+      pNew->wID = 0;
+      pNew->wName = 0;
+      pos ++;
+      if (pos < len)
+      {
+         lpVoiceList = realloc(lpVoiceList, sizeof(VOICEDESC) * pos);
+      }
+   }
+
+   fclose(fp);
+   return lpVoiceList;
+}
+
+VOID
+PAL_FreeVoiceList(
+   LPVOICEDESC   lpVoiceList
+)
+/*++
+  Purpose:
+
+    Free the voice list data.
+
+  Parameters:
+
+    [IN]  lpVoiceList - the data to be freed.
+
+  Return value:
+
+    None.
+
+--*/
+{
+   if (lpVoiceList != NULL)
+   {
+      free(lpVoiceList);
+   }
+}
+
 WORD
-PAL_GetVoiceID(
+PAL_GetVoiceName(
    WORD       wNum
 )
 {
-   static WORD i = 0;
-   i ++;
-   return i > 1 ? 0 : 12013;
+   LPVOICEDESC p;
+   if (gpGlobals->lpVoiceList != NULL)
+   {
+      p = gpGlobals->lpVoiceList;
+      while (p->wID != 0)
+      {
+         if (p->wID == wNum)
+         {
+            return p->wName;
+         }
+		 p ++;
+      }
+   }
+   return 0;
 }
 #endif

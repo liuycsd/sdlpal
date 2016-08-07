@@ -25,6 +25,7 @@
 #include "common.h"
 #include "map.h"
 #include "ui.h"
+#include "sound.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -561,6 +562,9 @@ typedef struct tagGLOBALVARS
    INVENTORY        rgInventory[MAX_INVENTORY];  // inventory status
 #ifndef PAL_WIN95
    LPOBJECTDESC     lpObjectDesc;
+#endif
+#ifdef PAL_HAS_VOICE
+   LPVOICEDESC      lpVoiceList;
 #endif
    DWORD            dwFrameNum;
 } GLOBALVARS, *LPGLOBALVARS;

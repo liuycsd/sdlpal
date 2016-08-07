@@ -3299,7 +3299,7 @@ PAL_RunTriggerScript(
          //
          // Print dialog text
          //
-         PAL_PlayVOICE(PAL_GetVoiceID(pScript->rgwOperand[0]));
+         PAL_PlayVOICE(PAL_GetVoiceName(pScript->rgwOperand[0]));
          PAL_ShowDialogText(PAL_GetMsg(pScript->rgwOperand[0]));
          wScriptEntry++;
          break;
