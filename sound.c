@@ -874,9 +874,6 @@ PAL_PlayVOICE(
       if (gSndPlayer.pMP3Voice != NULL)
       {
          mad_start(gSndPlayer.pMP3Voice);
-         SDL_mutexV(gSndPlayer.lockVoice);
-
-         return;
       }
 
       SDL_mutexV(gSndPlayer.lockVoice);
@@ -898,13 +895,12 @@ PAL_LoadVoiceList(
 
   Return value:
 
-    Pointer to loaded data, in WORD[][2] form. NULL if unable to load.
+    Pointer to loaded data, LPVOICEDESC[], terminated by {0,0}. NULL if failed.
 
 --*/
 {
    FILE                      *fp;
    char                       buf[32];
-   char                      *p;
    LPVOICEDESC                lpVoiceList = NULL, pNew = NULL;
    WORD                       pos, len;
 
@@ -918,11 +914,10 @@ PAL_LoadVoiceList(
    //
    // Load data
    //
-   len = 1;
+   len = 0;
    while (fgets(buf, 32, fp) != NULL && len < 0xffff)
    {
-      p = strchr(buf, '=');
-      if (p == NULL)
+      if (buf[0] == '#' || strchr(buf, '=') == NULL)
       {
          continue;
       }
@@ -932,20 +927,25 @@ PAL_LoadVoiceList(
       }
    }
 
-   lpVoiceList = (LPVOICEDESC)malloc(sizeof(VOICEDESC) * len);
+   if (len == 0)
+   {
+      fclose(fp);
+      return NULL;
+   }
+
+   lpVoiceList = (LPVOICEDESC)malloc(sizeof(VOICEDESC) * (len + 1));
    pNew = lpVoiceList;
    fseek(fp, 0, 0);
 
    pos = 0;
    while (fgets(buf, 32, fp) != NULL && pos < len)
    {
-      p = strchr(buf, '=');
-      if (p == NULL)
+      if (buf[0] == '#' || strchr(buf, '=') == NULL)
       {
          continue;
       }
 
-      if (sscanf(buf, "%hu=%hu", &pNew->wID, &pNew->wName))
+      if (sscanf(buf, "%hu=%hu", &pNew->wID, &pNew->wName) == 2 && pNew->wID != 0)
       {
          pNew ++;
          pos ++;
@@ -961,7 +961,6 @@ PAL_LoadVoiceList(
    {
       pNew->wID = 0;
       pNew->wName = 0;
-      pos ++;
       if (pos < len)
       {
          lpVoiceList = realloc(lpVoiceList, sizeof(VOICEDESC) * pos);
@@ -1012,7 +1011,7 @@ PAL_GetVoiceName(
          {
             return p->wName;
          }
-		 p ++;
+         p ++;
       }
    }
    return 0;
