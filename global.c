@@ -78,7 +78,7 @@ PAL_InitGlobals(
    gpGlobals->lpObjectDesc = PAL_LoadObjectDesc(va("%s%s", PAL_PREFIX, "desc.dat"));
 #endif
 #ifdef PAL_HAS_VOICE
-   gpGlobals->lpVoiceList = PAL_LoadVoiceList(va("%s%s", PAL_PREFIX, "voicelst.txt"));
+   gpGlobals->lpVoiceList = PAL_LoadVoiceList(va("%s%s", PAL_PREFIX, "voicemsg.txt"));
 #endif
    gpGlobals->bCurrentSaveSlot = 1;
 
