@@ -1,0 +1,6 @@
+# Voice Message List for SDLPAL
+# (c) 2016, liuycsd
+# GPL v3
+# Format: 
+# (uint16)ID=(uint16)FILENAME
+# File: audio_FILENAME.mp3
