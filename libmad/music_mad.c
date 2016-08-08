@@ -190,7 +190,8 @@ decode_frame(mad_data *mp3_mad) {
 	/* The first frame determines some key properties of the stream.
 	   In particular, it tells us enough to set up the convert
 	   structure now. */
-	SDL_BuildAudioCVT(&mp3_mad->cvt, AUDIO_S16, (Uint8)pcm->channels, mp3_mad->frame.header.samplerate, mp3_mad->mixer.format, mp3_mad->mixer.channels, mp3_mad->mixer.freq);
+	// SDL_BuildAudioCVT(&mp3_mad->cvt, AUDIO_S16, (Uint8)pcm->channels, mp3_mad->frame.header.samplerate, mp3_mad->mixer.format, mp3_mad->mixer.channels, mp3_mad->mixer.freq); // FIXME: HACK: Do NOT convert samplerate
+	SDL_BuildAudioCVT(&mp3_mad->cvt, AUDIO_S16, (Uint8)pcm->channels, mp3_mad->frame.header.samplerate, mp3_mad->mixer.format, mp3_mad->mixer.channels, mp3_mad->frame.header.samplerate);
   }
 
   /* pcm->samplerate contains the sampling frequency */
