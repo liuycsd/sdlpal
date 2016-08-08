@@ -2,5 +2,8 @@
 # (c) 2016, liuycsd
 # GPL v3
 # Format: 
-# (uint16)ID=(uint16)FILENAME
+#  (uint16)ID=(uint16)FILENAME
 # File: audio_FILENAME.mp3
+#  Best Sample Rate:
+#   exactly PAL_SAMPLE_RATE
+#    (Current 48000Hz)
